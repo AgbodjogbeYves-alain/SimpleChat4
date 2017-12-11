@@ -41,13 +41,17 @@ public class ClientGUI extends JFrame implements ChatIF,ActionListener
    * The default port to connect on.
    */
   final public static int DEFAULT_PORT = 5555;
+  final public static String DEFAULT_HOST = "localhost";
   //Instance variables **********************************************
   
   /**
    * The instance of the client that created this ConsoleChat.
    */
   ChatClient client;
-
+  private  JTextField pseudoTF = new JTextField();
+  private JTextField hostTF = new JTextField();
+  private JTextField portTF = new JTextField();
+  private JButton login = new JButton("Login");
   
   //Constructors ****************************************************
 
@@ -57,10 +61,10 @@ public class ClientGUI extends JFrame implements ChatIF,ActionListener
    * @param host The host to connect to.
    * @param port The port to connect on.
    */
-  public ClientGUI(String host, int port) 
+  public ClientGUI() 
   {
 	super("Client Console"); // ou setTitle("...");
-	 // affiche la fenï¿½tre
+	 // affiche la fenêtre
 	JPanel containerPseudo = new JPanel();
 	JPanel containerHost = new JPanel();
 	JPanel containerPort = new JPanel();
@@ -76,12 +80,8 @@ public class ClientGUI extends JFrame implements ChatIF,ActionListener
 	labelHost.setFont(font);
 	labelPort.setFont(font);
 
-	JButton login = new JButton("Login");
 	
-	
-	JTextField pseudoTF = new JTextField();
-	JTextField hostTF = new JTextField();
-	JTextField portTF = new JTextField();
+	login.addActionListener(this);
 	
 	this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 	this.setLayout(new BoxLayout(getContentPane(), BoxLayout.PAGE_AXIS));
@@ -105,24 +105,11 @@ public class ClientGUI extends JFrame implements ChatIF,ActionListener
     this.add(containerPort);
     this.add(containerButtonLog);
     
-    login.addActionListener(this);
-    
     this.setIconImage(new ImageIcon(this.getClass().getResource("unnamed.png")).getImage());
     this.setVisible(true);            
 	
-	// affiche la fenetre
+	// affiche la fenêtre
     pack();
-    
-    try 
-    {
-      client= new ChatClient(host,port,this);
-    } 
-    catch(IOException exception) 
-    {
-      System.out.println("Error: Can't setup connection!"
-                + " Terminating client.");
-      System.exit(1);
-    }
   }
   
   //Instance methods ************************************************
@@ -178,33 +165,60 @@ public class ClientGUI extends JFrame implements ChatIF,ActionListener
   {
 	
     int port; //The port number
-
 	String host;
-	try
-    {
-      host = args[0];
-      
-    }
-    catch(ArrayIndexOutOfBoundsException e)
-    {
-      host = "localhost";
      
-    }
+	host = "localhost";
+    port = 5555;
     
-    try {
-    	port = Integer.parseInt(args[1]);
-    }
-    catch(ArrayIndexOutOfBoundsException e) {
-    	port = 5555;
-    }
-    ClientGUI chat= new ClientGUI(host,port);
-    
-    chat.accept();  //Wait for console data
+    ClientGUI chat= new ClientGUI();
+
   }
 
 @Override
-public void actionPerformed(ActionEvent e) {
-	// TODO lancer main envoyer message #login avec l id
+	public void actionPerformed(ActionEvent e) {
+		Object source = e.getSource();
+		if(source == login) {
+			String pseudo = pseudoTF.getText();
+			if(pseudo!=null) {
+				Integer port = Integer.parseInt(portTF.getText());
+				String host = hostTF.getText();
+				if(port==null) {
+					port = DEFAULT_PORT;
+				}
+				if(host==null) {
+					host = DEFAULT_HOST;
+				}
+				
+				try 
+				{
+				  client= new ChatClient(host,port,this);
+				} 
+				catch(IOException exception) 
+				{
+				  System.out.println("Error: Can't setup connection!"
+				            + " Terminating client.");
+				  System.exit(1);
+				}
+				
+			}	
+				
+
+			   
+				accept();  //Wait for console data
+				//TODO Faudras faire un appel system avec un #login pseudo
+			}
+		}
+		
 }
-}
+
 //End of ConsoleChat class
+
+
+
+
+
+
+
+
+
+
