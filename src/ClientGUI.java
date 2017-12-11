@@ -4,6 +4,8 @@
 
 import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.*;
 import java.util.Scanner;
 
@@ -31,7 +33,7 @@ import common.*;
  * @author Dr Robert Lagani&egrave;re
  * @version July 2000
  */
-public class ClientGUI extends JFrame implements ChatIF 
+public class ClientGUI extends JFrame implements ChatIF,ActionListener
 {
   //Class variables *************************************************
   
@@ -39,11 +41,6 @@ public class ClientGUI extends JFrame implements ChatIF
    * The default port to connect on.
    */
   final public static int DEFAULT_PORT = 5555;
-  public JButton resumeb = new JButton("Resume"); 
-  public JTextField nom = new JTextField();
-  public JTextField prenom = new JTextField();
-  public JTextField tel = new JTextField();
-  public JTextArea resume = new JTextArea();
   //Instance variables **********************************************
   
   /**
@@ -63,7 +60,7 @@ public class ClientGUI extends JFrame implements ChatIF
   public ClientGUI(String host, int port) 
   {
 	super("Client Console"); // ou setTitle("...");
-	 // affiche la fenêtre
+	 // affiche la fenï¿½tre
 	JPanel containerPseudo = new JPanel();
 	JPanel containerHost = new JPanel();
 	JPanel containerPort = new JPanel();
@@ -108,10 +105,12 @@ public class ClientGUI extends JFrame implements ChatIF
     this.add(containerPort);
     this.add(containerButtonLog);
     
+    login.addActionListener(this);
+    
     this.setIconImage(new ImageIcon(this.getClass().getResource("unnamed.png")).getImage());
     this.setVisible(true);            
 	
-	// affiche la fenêtre
+	// affiche la fenetre
     pack();
     
     try 
@@ -202,5 +201,10 @@ public class ClientGUI extends JFrame implements ChatIF
     
     chat.accept();  //Wait for console data
   }
+
+@Override
+public void actionPerformed(ActionEvent e) {
+	// TODO lancer main envoyer message #login avec l id
+}
 }
 //End of ConsoleChat class
