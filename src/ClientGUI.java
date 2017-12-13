@@ -2,8 +2,14 @@
 // "Object Oriented Software Engineering" and is issued under the open-source
 // license found at www.lloseng.com 
 
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.GridLayout;
+import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.*;
@@ -15,6 +21,8 @@ import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JScrollBar;
+import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
@@ -51,8 +59,17 @@ public class ClientGUI extends JFrame implements ChatIF,ActionListener
   private  JTextField pseudoTF = new JTextField();
   private JTextField hostTF = new JTextField();
   private JTextField portTF = new JTextField();
+  private JTextField messageTF = new JTextField();
   private JButton login = new JButton("Login");
+  private JButton logoff = new JButton("Logoff");
+  private JButton envoyerB = new JButton("Envoyer");
+  private JPanel displayMessage = new JPanel();
+  private JScrollPane panedisplay = new JScrollPane(displayMessage);
+  private int hauteur = 400;
   
+//  private JButton login = new JButton("Login");
+//  private JButton login = new JButton("Login");
+
   //Constructors ****************************************************
 
   /**
@@ -61,154 +78,184 @@ public class ClientGUI extends JFrame implements ChatIF,ActionListener
    * @param host The host to connect to.
    * @param port The port to connect on.
    */
-  public ClientGUI() 
+  public ClientGUI(String host,int port) 
   {
 	super("Client Console"); // ou setTitle("...");
 	 // affiche la fenêtre
-	JPanel containerPseudo = new JPanel();
-	JPanel containerHost = new JPanel();
-	JPanel containerPort = new JPanel();
-	JPanel containerButtonLog = new JPanel();
-		
-		
-	JLabel labelPseudo = new JLabel("Pseudo : ");
-	JLabel labelHost = new JLabel("Host : ");
-	JLabel labelPort = new JLabel("Port : ");
+//	JPanel containerPseudo = new JPanel();
+//	JPanel containerHost = new JPanel();
+//	JPanel containerPort = new JPanel();
+	JPanel containerButton = new JPanel();
+	JPanel containerMessage = new JPanel();
 	
-	Font font = new Font("Arial",Font.BOLD,20);
-	labelPseudo.setFont(font);
-	labelHost.setFont(font);
-	labelPort.setFont(font);
-
+	
+	
+		
+//	JLabel labelPseudo = new JLabel("Pseudo : ");
+//	JLabel labelHost = new JLabel("Host : ");
+//	JLabel labelPort = new JLabel("Port : ");
+//	
+	
+//	Font font = new Font("Arial",Font.BOLD,20);
+//	labelPseudo.setFont(font);
+//	labelHost.setFont(font);
+//	labelPort.setFont(font);
 	
 	login.addActionListener(this);
+	logoff.addActionListener(this);
+	envoyerB.addActionListener(this);
 	
 	this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 	this.setLayout(new BoxLayout(getContentPane(), BoxLayout.PAGE_AXIS));
+	panedisplay.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+    panedisplay.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
+    panedisplay.setPreferredSize(new Dimension(400,400));
+    panedisplay.setAutoscrolls(false);
+	//this.setLayout(new BoxLayout(getContentPane(), BoxLayout.PAGE_AXIS));
 	
 	this.setSize(600, 600);
-	pseudoTF.setPreferredSize(new Dimension(400, 40));
-    hostTF.setPreferredSize(new Dimension(400, 40));
-    portTF.setPreferredSize(new Dimension(400, 40));
-   
-    containerPseudo.add(labelPseudo);
-    containerPseudo.add(pseudoTF);
-    containerHost.add(labelHost);
-    containerHost.add(hostTF);
-    containerPort.add(labelPort);
-    containerPort.add(portTF);
-    containerButtonLog.add(login);
+//	pseudoTF.setPreferredSize(new Dimension(400, 40));
+//    hostTF.setPreferredSize(new Dimension(400, 40));
+//    portTF.setPreferredSize(new Dimension(400, 40));
+	messageTF.setPreferredSize(new Dimension(400, 30));
+	
+    //containerPseudo.add(labelPseudo);
+    //containerPseudo.add(pseudoTF);
+    //containerHost.add(labelHost);
+    //containerHost.add(hostTF);
+    //containerPort.add(labelPort);
+    //containerPort.add(portTF);
+	
+    containerButton.add(login);
+    containerButton.add(logoff);
+    
+	containerMessage.add(messageTF);
+	containerMessage.add(envoyerB);
+    displayMessage.setPreferredSize(new Dimension(600,hauteur));
+    displayMessage.setLayout(new BoxLayout(displayMessage, BoxLayout.PAGE_AXIS));
+    displayMessage.setBackground(Color.WHITE);
     
     
-    this.add(containerPseudo);
-    this.add(containerHost);
-    this.add(containerPort);
-    this.add(containerButtonLog);
+    //JScrollPane pane= new JScrollPane(displayMessage);  
+    //pane.setBackground(Color.WHITE);
+    //this.add(containerPseudo);
+    //this.add(containerHost);
+    //this.add(containerPort);
+    this.add(containerButton);
+    this.add(panedisplay);
+    this.add(containerMessage);
     
     this.setIconImage(new ImageIcon(this.getClass().getResource("unnamed.png")).getImage());
     this.setVisible(true);            
 	
 	// affiche la fenêtre
-    pack();
-  }
-  
-  //Instance methods ************************************************
-  
-  /**
-   * This method waits for input from the console.  Once it is 
-   * received, it sends it to the client's message handler.
-   */
-  public void accept() 
-  {
-    try
+    this.pack();
+    
+    try 
     {
-      BufferedReader fromConsole = 
-        new BufferedReader(new InputStreamReader(System.in));
-      String message;
-
-      while (true) 
-      {
-        message = fromConsole.readLine();
-        
-        	client.handleMessageFromClientUI(message); 
-      }
+      client= new ChatClient(host,port,this);
     } 
-    catch (Exception ex) 
+    catch(IOException exception) 
     {
-      System.out.println("Unexpected error while reading from console!");
+      System.out.println("Error: Can't setup connection!"
+                + " Terminating client.");
+      System.exit(1);
     }
   }
-
-  /**
-   * This method overrides the method in the ChatIF interface.  It
-   * displays a message onto the screen.
-   *
-   * @param message The string to be displayed.
-   */
-  public void display(String message) 
-  {
-    System.out.println("> " + message);
-  }
-
-  /**
-   * This method parse the message and get the first letter
-   */
   
-  //Class methods ***************************************************
-  
-  /**
-   * This method is responsible for the creation of the Client UI.
-   *
-   * @param args[0] The host to connect to.
-   */
-  public static void main(String[] args) 
-  {
+	//Instance methods ************************************************
+	  
+	  /**
+	   * This method waits for input from the console.  Once it is 
+	   * received, it sends it to the client's message handler.
+	   */
+	  public void accept() 
+	  {
+	    try
+	    {
+	      BufferedReader fromConsole = 
+	        new BufferedReader(new InputStreamReader(System.in));
+	      String message;
 	
-    int port; //The port number
-	String host;
-     
-	host = "localhost";
-    port = 5555;
-    
-    ClientGUI chat= new ClientGUI();
+	      while (true) 
+	      {
+	        message = fromConsole.readLine();
+	        
+	        	client.handleMessageFromClientUI(message); 
+	      }
+	    } 
+	    catch (Exception ex) 
+	    {
+	      System.out.println("Unexpected error while reading from console!");
+	    }
+	  }
 
-  }
 
-@Override
+	@Override
 	public void actionPerformed(ActionEvent e) {
 		Object source = e.getSource();
 		if(source == login) {
-			String pseudo = pseudoTF.getText();
-			if(pseudo!=null) {
-				Integer port = Integer.parseInt(portTF.getText());
-				String host = hostTF.getText();
-				if(port==null) {
-					port = DEFAULT_PORT;
-				}
-				if(host==null) {
-					host = DEFAULT_HOST;
-				}
-				
-				try 
-				{
-				  client= new ChatClient(host,port,this);
-				} 
-				catch(IOException exception) 
-				{
-				  System.out.println("Error: Can't setup connection!"
-				            + " Terminating client.");
-				  System.exit(1);
-				}
-				
-			}	
-				
-
-			   
-				accept();  //Wait for console data
-				//TODO Faudras faire un appel system avec un #login pseudo
+			//client.handleMessageFromClientUI("#login" + pseudoTF);
+			System.out.println("fraise");
+		}else if(source == logoff){
+			System.out.println("logoff");
+		}else if(source == envoyerB){
+			String message = messageTF.getText();
+			if(message!="") {
+				client.handleMessageFromClientUI(message); 
 			}
-		}
+		}	
+	}
+
+	@Override
+	public void display(String message) {
+		JLabel messageReceived = new JLabel("> " + message);
+		hauteur = hauteur + 15;
+		displayMessage.setPreferredSize(new Dimension(displayMessage.getWidth(),hauteur));
+		displayMessage.add(messageReceived);
+		displayMessage.validate();
+		panedisplay.validate();
+		repaint();
+		this.getContentPane().validate();
+		System.out.println("> " + message);
+	}
+	
+	
+	//Class methods ***************************************************
+	  
+	  /**
+	   * This method is responsible for the creation of the Client UI.
+	   *
+	   * @param args[0] The host to connect to.
+	   */
+	  public static void main(String[] args) 
+	  {
 		
+	    String host = "localhost";
+	    int port; //The port number
+
+		try
+	    {
+	      host = args[0];
+	      
+	    }
+	    catch(ArrayIndexOutOfBoundsException e)
+	    {
+	      host = "localhost";
+	     
+	    }
+	    
+	    try {
+	    	port = Integer.parseInt(args[1]);
+	    }
+	    catch(ArrayIndexOutOfBoundsException e) {
+	    	port = 5555;
+	    }
+	    ClientGUI chat= new ClientGUI(host,port);
+	    
+	    chat.accept();  //Wait for console data
+	  }
+	  
 }
 
 //End of ConsoleChat class
