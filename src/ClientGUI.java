@@ -66,10 +66,12 @@ public class ClientGUI extends JFrame implements ChatIF,ActionListener
   private JPanel displayMessage = new JPanel();
   private JScrollPane panedisplay = new JScrollPane(displayMessage);
   private int hauteur = 400;
-  
+  private JTextArea tA = new JTextArea();
+  private JButton valider= new JButton("Valider");
+  private JTextField newCommand = new JTextField();
+  //  private JButton login = new JButton("Login");
 //  private JButton login = new JButton("Login");
-//  private JButton login = new JButton("Login");
-
+  private JFrame fra = new JFrame();
   //Constructors ****************************************************
 
   /**
@@ -194,9 +196,19 @@ public class ClientGUI extends JFrame implements ChatIF,ActionListener
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		Object source = e.getSource();
+		JPanel displayCommand = new JPanel();
 		if(source == login) {
 			//client.handleMessageFromClientUI("#login" + pseudoTF);
-			System.out.println("fraise");
+			fra.setLayout(new BoxLayout(fra.getContentPane(),BoxLayout.PAGE_AXIS));
+			JLabel login = new JLabel("Pseudo : ");
+			newCommand.setPreferredSize(new Dimension(120,30));
+			displayCommand.add(login);
+			displayCommand.add(newCommand);
+			valider.addActionListener(this);
+			fra.add(displayCommand);
+			fra.add(valider);
+			fra.pack();
+			fra.setVisible(true);
 		}else if(source == logoff){
 			System.out.println("logoff");
 		}else if(source == envoyerB){
@@ -204,20 +216,24 @@ public class ClientGUI extends JFrame implements ChatIF,ActionListener
 			if(message!="") {
 				client.handleMessageFromClientUI(message); 
 			}
-		}	
+		}else if(source == valider) {
+			String message = newCommand.getText();
+			client.handleMessageFromClientUI(message);
+			fra.dispose();
+		}
 	}
 
 	@Override
 	public void display(String message) {
-		JLabel messageReceived = new JLabel("> " + message);
+		JLabel messageReceived = new JLabel(message);
 		hauteur = hauteur + 15;
 		displayMessage.setPreferredSize(new Dimension(displayMessage.getWidth(),hauteur));
 		displayMessage.add(messageReceived);
 		displayMessage.validate();
 		panedisplay.validate();
-		repaint();
 		this.getContentPane().validate();
-		System.out.println("> " + message);
+		System.out.println(message);
+		newCommand.setText("");
 	}
 	
 	
