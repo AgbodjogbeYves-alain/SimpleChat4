@@ -113,7 +113,8 @@ public class ClientGUI extends JFrame implements ChatIF,ActionListener
 	envoyerB.addActionListener(this);
 	hostB.addActionListener(this);
 	portB.addActionListener(this);
-	
+	getPortB.addActionListener(this);
+	getHostB.addActionListener(this);
 	
 	this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 	this.setLayout(new BoxLayout(getContentPane(), BoxLayout.PAGE_AXIS));
@@ -180,7 +181,7 @@ public class ClientGUI extends JFrame implements ChatIF,ActionListener
 		JPanel displayCommand = new JPanel();
 		
 		
-		if(command == "login") {
+		if(command == "login ") {
 			
 			label = new JLabel("Pseudo : ");
 			
@@ -210,7 +211,7 @@ public class ClientGUI extends JFrame implements ChatIF,ActionListener
 		Object source = e.getSource();
 		if(source == loginB) {
 			
-			command = "login";
+			command = "login ";
 			showNextFrame(command);
 			
 		}else if(source == logoffB){
@@ -246,6 +247,7 @@ public class ClientGUI extends JFrame implements ChatIF,ActionListener
 			
 			command = "getport";
 			client.handleMessageFromClientUI("#"+command);
+			
 		}else if(source == getHostB) {
 			
 			command = "gethost";
