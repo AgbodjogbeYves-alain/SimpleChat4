@@ -56,22 +56,27 @@ public class ClientGUI extends JFrame implements ChatIF,ActionListener
    * The instance of the client that created this ConsoleChat.
    */
   ChatClient client;
-  private  JTextField pseudoTF = new JTextField();
+  private JTextField pseudoTF = new JTextField();
   private JTextField hostTF = new JTextField();
   private JTextField portTF = new JTextField();
   private JTextField messageTF = new JTextField();
-  private JButton login = new JButton("Login");
-  private JButton logoff = new JButton("Logoff");
+  private JButton loginB = new JButton("Login");
+  private JButton logoffB = new JButton("Logoff");
+  private JButton hostB = new JButton("New Host? Click here");
+  private JButton portB = new JButton("New Port? Click here");
+  private JButton getPortB = new JButton("What is your Port? Click here");
+  private JButton getHostB = new JButton("What is your Host? Click here");
+
+  
   private JButton envoyerB = new JButton("Envoyer");
   private JPanel displayMessage = new JPanel();
   private JScrollPane panedisplay = new JScrollPane(displayMessage);
   private int hauteur = 400;
   private JTextArea tA = new JTextArea();
-  private JButton valider= new JButton("Valider");
+  private JButton validerCommand= new JButton("Valider");
   private JTextField newCommand = new JTextField();
-  //  private JButton login = new JButton("Login");
-//  private JButton login = new JButton("Login");
-  private JFrame fra = new JFrame();
+  private JFrame frameCommand = new JFrame();
+  private String command = null;
   //Constructors ****************************************************
 
   /**
@@ -103,33 +108,37 @@ public class ClientGUI extends JFrame implements ChatIF,ActionListener
 //	labelHost.setFont(font);
 //	labelPort.setFont(font);
 	
-	login.addActionListener(this);
-	logoff.addActionListener(this);
+	loginB.addActionListener(this);
+	logoffB.addActionListener(this);
 	envoyerB.addActionListener(this);
+	hostB.addActionListener(this);
+	portB.addActionListener(this);
+	
 	
 	this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 	this.setLayout(new BoxLayout(getContentPane(), BoxLayout.PAGE_AXIS));
+	
+	frameCommand.setLayout(new BoxLayout(frameCommand.getContentPane(),BoxLayout.PAGE_AXIS));
+	newCommand.setPreferredSize(new Dimension(120,30));
+	
 	panedisplay.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
     panedisplay.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
     panedisplay.setPreferredSize(new Dimension(400,400));
     panedisplay.setAutoscrolls(false);
-	//this.setLayout(new BoxLayout(getContentPane(), BoxLayout.PAGE_AXIS));
 	
 	this.setSize(600, 600);
-//	pseudoTF.setPreferredSize(new Dimension(400, 40));
-//    hostTF.setPreferredSize(new Dimension(400, 40));
-//    portTF.setPreferredSize(new Dimension(400, 40));
+
 	messageTF.setPreferredSize(new Dimension(400, 30));
+	messageTF.addActionListener(this);
 	
-    //containerPseudo.add(labelPseudo);
-    //containerPseudo.add(pseudoTF);
-    //containerHost.add(labelHost);
-    //containerHost.add(hostTF);
-    //containerPort.add(labelPort);
-    //containerPort.add(portTF);
-	
-    containerButton.add(login);
-    containerButton.add(logoff);
+    containerButton.add(loginB);
+    containerButton.add(logoffB);
+    containerButton.add(hostB);
+    containerButton.add(portB);
+    containerButton.add(getPortB);
+    containerButton.add(getHostB);
+
+    
     
 	containerMessage.add(messageTF);
 	containerMessage.add(envoyerB);
@@ -165,62 +174,85 @@ public class ClientGUI extends JFrame implements ChatIF,ActionListener
     }
   }
   
-	//Instance methods ************************************************
-	  
-	  /**
-	   * This method waits for input from the console.  Once it is 
-	   * received, it sends it to the client's message handler.
-	   */
-	  public void accept() 
-	  {
-	    try
-	    {
-	      BufferedReader fromConsole = 
-	        new BufferedReader(new InputStreamReader(System.in));
-	      String message;
-	
-	      while (true) 
-	      {
-	        message = fromConsole.readLine();
-	        
-	        	client.handleMessageFromClientUI(message); 
-	      }
-	    } 
-	    catch (Exception ex) 
-	    {
-	      System.out.println("Unexpected error while reading from console!");
-	    }
-	  }
-
+	public void showNextFrame(String command) {
+		
+		JLabel label = null;
+		JPanel displayCommand = new JPanel();
+		
+		
+		if(command == "login") {
+			
+			label = new JLabel("Pseudo : ");
+			
+		}else if(command == "sethost ") {
+			
+			label = new JLabel("Host : ");
+			
+		}else if(command == "setport ") {
+			
+			label = new JLabel("Port : ");
+		}
+		
+		newCommand.addActionListener(this);
+		displayCommand.add(label);
+		displayCommand.add(newCommand);
+		validerCommand.addActionListener(this);
+		frameCommand.setContentPane(displayCommand);
+		frameCommand.add(validerCommand);
+		frameCommand.repaint();
+		frameCommand.pack();
+		frameCommand.setVisible(true);
+		
+	}
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		Object source = e.getSource();
-		JPanel displayCommand = new JPanel();
-		if(source == login) {
-			//client.handleMessageFromClientUI("#login" + pseudoTF);
-			fra.setLayout(new BoxLayout(fra.getContentPane(),BoxLayout.PAGE_AXIS));
-			JLabel login = new JLabel("Pseudo : ");
-			newCommand.setPreferredSize(new Dimension(120,30));
-			displayCommand.add(login);
-			displayCommand.add(newCommand);
-			valider.addActionListener(this);
-			fra.add(displayCommand);
-			fra.add(valider);
-			fra.pack();
-			fra.setVisible(true);
-		}else if(source == logoff){
-			System.out.println("logoff");
-		}else if(source == envoyerB){
+		if(source == loginB) {
+			
+			command = "login";
+			showNextFrame(command);
+			
+		}else if(source == logoffB){
+			
+			client.handleMessageFromClientUI("#logoff");
+			
+		}else if(source == envoyerB || source == messageTF){
+			
 			String message = messageTF.getText();
 			if(message!="") {
+				
 				client.handleMessageFromClientUI(message); 
+				
 			}
-		}else if(source == valider) {
+			
+		}else if(source == validerCommand || source == newCommand) {
+			
 			String message = newCommand.getText();
-			client.handleMessageFromClientUI(message);
-			fra.dispose();
+			client.handleMessageFromClientUI("#"+command+message);
+			frameCommand.dispose();
+			
+		}else if(source == hostB) {
+			
+			command = "sethost ";
+			showNextFrame(command);
+			
+		}else if(source == portB) {
+			
+			command = "setport ";
+			showNextFrame(command);
+			
+		}else if(source == getPortB) {
+			
+			command = "getport";
+			client.handleMessageFromClientUI("#"+command);
+		}else if(source == getHostB) {
+			
+			command = "gethost";
+			client.handleMessageFromClientUI("#"+command);
 		}
+		
+			
 	}
 
 	@Override
@@ -234,6 +266,7 @@ public class ClientGUI extends JFrame implements ChatIF,ActionListener
 		this.getContentPane().validate();
 		System.out.println(message);
 		newCommand.setText("");
+		newCommand.validate();
 	}
 	
 	
@@ -269,7 +302,6 @@ public class ClientGUI extends JFrame implements ChatIF,ActionListener
 	    }
 	    ClientGUI chat= new ClientGUI(host,port);
 	    
-	    chat.accept();  //Wait for console data
 	  }
 	  
 }
