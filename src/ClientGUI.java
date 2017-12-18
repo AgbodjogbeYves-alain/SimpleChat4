@@ -226,12 +226,16 @@ public class ClientGUI extends JFrame implements ChatIF,ActionListener
 				client.handleMessageFromClientUI(message); 
 				
 			}
+			messageTF.setText("");
+			messageTF.validate();
 			
 		}else if(source == validerCommand || source == newCommand) {
 			
 			String message = newCommand.getText();
 			client.handleMessageFromClientUI("#"+command+message);
 			frameCommand.dispose();
+			newCommand.setText("");
+			newCommand.validate();
 			
 		}else if(source == hostB) {
 			
@@ -264,11 +268,7 @@ public class ClientGUI extends JFrame implements ChatIF,ActionListener
 		displayMessage.setPreferredSize(new Dimension(displayMessage.getWidth(),hauteur));
 		displayMessage.add(messageReceived);
 		displayMessage.validate();
-		panedisplay.validate();
-		this.getContentPane().validate();
-		System.out.println(message);
-		newCommand.setText("");
-		newCommand.validate();
+		
 	}
 	
 	
