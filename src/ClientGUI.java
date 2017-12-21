@@ -89,49 +89,44 @@ public class ClientGUI extends JFrame implements ChatIF,ActionListener
   {
 	super("Client Console"); // ou setTitle("...");
 	 // affiche la fenêtre
-//	JPanel containerPseudo = new JPanel();
-//	JPanel containerHost = new JPanel();
-//	JPanel containerPort = new JPanel();
+
 	JPanel containerButton = new JPanel();
 	JPanel containerMessage = new JPanel();
 	
-	
-	
-		
-//	JLabel labelPseudo = new JLabel("Pseudo : ");
-//	JLabel labelHost = new JLabel("Host : ");
-//	JLabel labelPort = new JLabel("Port : ");
-//	
-	
-//	Font font = new Font("Arial",Font.BOLD,20);
-//	labelPseudo.setFont(font);
-//	labelHost.setFont(font);
-//	labelPort.setFont(font);
-	
-	loginB.addActionListener(this);
-	logoffB.addActionListener(this);
-	envoyerB.addActionListener(this);
-	hostB.addActionListener(this);
-	portB.addActionListener(this);
-	getPortB.addActionListener(this);
-	getHostB.addActionListener(this);
-	
+	//On édite les paramètre de la fenêtre principale
 	this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-	this.setLayout(new BoxLayout(getContentPane(), BoxLayout.PAGE_AXIS));
+	this.setLayout(new BoxLayout(getContentPane(), BoxLayout.PAGE_AXIS));//Type de fenêtre
+	this.setSize(600, 600);
 	
-	frameCommand.setLayout(new BoxLayout(frameCommand.getContentPane(),BoxLayout.PAGE_AXIS));
-	newCommand.setPreferredSize(new Dimension(120,30));
-	
+	//On fixe les paramètre pour le panel de scroll lorsqu'on écris des messages
 	panedisplay.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
     panedisplay.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
     panedisplay.setPreferredSize(new Dimension(400,400));
     panedisplay.setAutoscrolls(false);
-	
-	this.setSize(600, 600);
 
+	//Pour tout les boutons on rajoute les actions listeners
+	loginB.addActionListener(this); //Actionlistener bouton login
+	logoffB.addActionListener(this); //Actionlistener bouton logoff
+	envoyerB.addActionListener(this);//Actionlistener bouton envoyerB pour les messages
+	hostB.addActionListener(this);//Actionlistener bouton hostB pour changer le host
+	portB.addActionListener(this);//Actionlistener bouton portB pour changer le port
+	getPortB.addActionListener(this);//Actionlistener bouton getPortB pour récupérer le port sur lequel écoute le client
+	getHostB.addActionListener(this);//Actionlistener bouton getHostB pour récupérer l'adresse sur laquelle le client écoute
+	
+	
+	//Paramètre fenêtre secondaire de mise à jour des informations (Pseudo,Host,Port) 
+	frameCommand.setLayout(new BoxLayout(frameCommand.getContentPane(),BoxLayout.PAGE_AXIS));
+	newCommand.setPreferredSize(new Dimension(120,30));
+	
+	
+	
+	
+	//Le text area de message qui serviras au client pour entrer ses messages
 	messageTF.setPreferredSize(new Dimension(400, 30));
 	messageTF.addActionListener(this);
 	
+	
+	//On rajoute les boutons au container de bouton
     containerButton.add(loginB);
     containerButton.add(logoffB);
     containerButton.add(hostB);
@@ -140,29 +135,29 @@ public class ClientGUI extends JFrame implements ChatIF,ActionListener
     containerButton.add(getHostB);
 
     
-    
+    //On rajoute les composantes au container qui va avoir la zone de saisie de texte par le client
 	containerMessage.add(messageTF);
 	containerMessage.add(envoyerB);
+	
+	//Paramétrage container de message envoyer par le serveur et par les autres clients
     displayMessage.setPreferredSize(new Dimension(600,hauteur));
     displayMessage.setLayout(new BoxLayout(displayMessage, BoxLayout.PAGE_AXIS));
     displayMessage.setBackground(Color.WHITE);
     
     
-    //JScrollPane pane= new JScrollPane(displayMessage);  
-    //pane.setBackground(Color.WHITE);
-    //this.add(containerPseudo);
-    //this.add(containerHost);
-    //this.add(containerPort);
+   //On rajoute les differents container crées dans notre Frame principale
     this.add(containerButton);
     this.add(panedisplay);
     this.add(containerMessage);
     
-    this.setIconImage(new ImageIcon(this.getClass().getResource("unnamed.png")).getImage());
-    this.setVisible(true);            
+               
 	
-	// affiche la fenêtre
+	// rajoute l'icone de l'app et affiche la fenêtre
+    this.setIconImage(new ImageIcon(this.getClass().getResource("logo.png")).getImage());
+    this.setVisible(true);
     this.pack();
     
+   
     try 
     {
       client= new ChatClient(host,port,this);
@@ -175,12 +170,16 @@ public class ClientGUI extends JFrame implements ChatIF,ActionListener
     }
   }
   
+  	/**
+  	 * Fonction d'affichage de fenêtre secondaire
+  	 * @param command : String -> Le paramètre qui va être changé (Host,Port,Pseudo)
+  	 */
 	public void showNextFrame(String command) {
 		
 		JLabel label = null;
 		JPanel displayCommand = new JPanel();
 		
-		
+		//Sert à la création du label en fonction du paramètre à modifier
 		if(command == "login ") {
 			
 			label = new JLabel("Pseudo : ");
@@ -194,6 +193,7 @@ public class ClientGUI extends JFrame implements ChatIF,ActionListener
 			label = new JLabel("Port : ");
 		}
 		
+		//On ajoute le label, le text field où sera rentré la nouvelle valeur du paramètre a la fenêtre secondaire et on affiche cette fenêtre secondaire
 		newCommand.addActionListener(this);
 		displayCommand.add(label);
 		displayCommand.add(newCommand);
@@ -264,7 +264,7 @@ public class ClientGUI extends JFrame implements ChatIF,ActionListener
 	@Override
 	public void display(String message) {
 		JLabel messageReceived = new JLabel(message);
-		hauteur = hauteur + 15;
+		hauteur = hauteur + 15;//Pour mettre à jour le barre de scroll on doit mettre à jour le displayMessage
 		displayMessage.setPreferredSize(new Dimension(displayMessage.getWidth(),hauteur));
 		displayMessage.add(messageReceived);
 		displayMessage.validate();
