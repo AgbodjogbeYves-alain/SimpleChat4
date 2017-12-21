@@ -56,10 +56,12 @@ public class ClientGUI extends JFrame implements ChatIF,ActionListener
    * The instance of the client that created this ConsoleChat.
    */
   ChatClient client;
+  //creation textfields
   private JTextField pseudoTF = new JTextField();
   private JTextField hostTF = new JTextField();
   private JTextField portTF = new JTextField();
   private JTextField messageTF = new JTextField();
+  //creation buttons
   private JButton loginB = new JButton("Login");
   private JButton logoffB = new JButton("Logoff");
   private JButton hostB = new JButton("New Host? Click here");
@@ -93,12 +95,12 @@ public class ClientGUI extends JFrame implements ChatIF,ActionListener
 	JPanel containerButton = new JPanel();
 	JPanel containerMessage = new JPanel();
 	
-	//On édite les paramètre de la fenêtre principale
+	//On édite les paramètres de la fenêtre principale
 	this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 	this.setLayout(new BoxLayout(getContentPane(), BoxLayout.PAGE_AXIS));//Type de fenêtre
 	this.setSize(600, 600);
 	
-	//On fixe les paramètre pour le panel de scroll lorsqu'on écris des messages
+	//On fixe les paramètres pour le panel de scroll lorsqu'on écrit des messages
 	panedisplay.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
     panedisplay.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
     panedisplay.setPreferredSize(new Dimension(400,400));
@@ -153,7 +155,7 @@ public class ClientGUI extends JFrame implements ChatIF,ActionListener
                
 	
 	// rajoute l'icone de l'app et affiche la fenêtre
-    this.setIconImage(new ImageIcon(this.getClass().getResource("logo.png")).getImage());
+    //this.setIconImage(new ImageIcon(this.getClass().getResource("logo.png")).getImage());
     this.setVisible(true);
     this.pack();
     
@@ -193,7 +195,7 @@ public class ClientGUI extends JFrame implements ChatIF,ActionListener
 			label = new JLabel("Port : ");
 		}
 		
-		//On ajoute le label, le text field où sera rentré la nouvelle valeur du paramètre a la fenêtre secondaire et on affiche cette fenêtre secondaire
+		//On ajoute le label, le text field où sera rentré la nouvelle valeur du paramètre à la fenêtre secondaire et on affiche cette fenêtre secondaire
 		newCommand.addActionListener(this);
 		displayCommand.add(label);
 		displayCommand.add(newCommand);
@@ -208,7 +210,9 @@ public class ClientGUI extends JFrame implements ChatIF,ActionListener
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
+		//recupère source
 		Object source = e.getSource();
+		//Différentes actions en fonction de la source
 		if(source == loginB) {
 			
 			command = "login ";
@@ -309,13 +313,3 @@ public class ClientGUI extends JFrame implements ChatIF,ActionListener
 }
 
 //End of ConsoleChat class
-
-
-
-
-
-
-
-
-
-
